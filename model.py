@@ -10,7 +10,9 @@ class User(db.Model):
     username = db.Column(db.String(25), unique = True, nullable = False)
     password = db.Column(db.String(25), nullable = False)
     
-def __init__(self, username, password):
+    teams = db.relationship("Team", backref = "users", lazy = True)
+    
+    def __init__(self, username, password):
         self.username = username
         self.password = password
     
@@ -22,12 +24,15 @@ class Team(db.Model):
     team_name = db.Column(db.String(25), unique = True, nullable = False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable = False)
     
-def __init__(self, team_name, user_id):
+    projects = db.relationship("Project", backref = "team", lazy = True)
+    
+    def __init__(self, team_name, user_id):
         self.team_name = team_name
         self.user_id = user_id
 
 
 class Project(db.Model):
+    
     __tablename__="projects"
     
     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
@@ -36,7 +41,8 @@ class Project(db.Model):
     completed = db.Column(db.Boolean, default = False)
     team_id = db.Column(db.Integer, db.ForeignKey("teams.id"), nullable=False)
     
-def __init__(self, project_name, description,completed, team_id):
+    
+    def __init__(self, project_name, description,completed, team_id):
         self.project_name = project_name
         self.description = description
         self.completed = completed
